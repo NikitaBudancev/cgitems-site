@@ -1,0 +1,51 @@
+.profile-color {
+  position: absolute;
+  top: -20px;
+  left: -40px;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 140px;
+  padding: 10px;
+  background-color: $color-secondary-850;
+  border: 1px solid $color-secondary-820;
+  border-radius: 10px;
+  box-shadow: 0 0 8px 8px #0009;
+
+  &__box {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+
+  &__input {
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+}
+
+.profile__menu {
+  width: 240px;
+  left: -160px;
+  top: 52px;
+
+  svg {
+    margin-right: 10px;
+    fill: #889DBA;
+    transition: all 0.3s;
+  }
+
+  & .profile__link {
+    transition: all 0.3s;
+
+    &:hover {
+      color: $color-primary-500;
+      svg {
+        fill: $color-primary-500;
+      }
+    }
+  }
+}

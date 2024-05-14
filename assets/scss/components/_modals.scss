@@ -1,0 +1,183 @@
+.modal {
+  //display: none;
+  background: $color-secondary-850;
+  border-radius: 16px;
+  width: 700px;
+  padding: 40px;
+  cursor: default !important;
+  border: 1px solid #2F3C4A;
+  box-shadow: 0 4px 8px 0 #00000099;
+
+  &.contacts {
+    max-width: 700px;
+    padding: 40px;
+    background-image: url("#{$path}popup/pixel-popup-right.png");
+    background-repeat: no-repeat;
+    background-position: bottom right;
+
+    & .button-contacts {
+      font-size: 18px;
+      padding: 10px 65px;
+    }
+  }
+
+  &.success {
+    display: none;
+    width: 100%;
+    padding-top: 62px;
+    padding-bottom: 62px;
+    background-image: url("#{$path}/popup/modal-success-bg.svg");
+
+    .popup-item-title-big {
+      max-width: 424px;
+      margin-bottom: 18px;
+      font-weight: 900;
+      font-size: 38px;
+      line-height: 45px;
+      letter-spacing: 0.03em;
+      color: #F3F4F4;
+    }
+
+    .popup-item-title {
+      color: #798FAA;
+    }
+
+  }
+
+  &.letter {
+
+    max-width: 544px;
+
+    .auth__title {
+      font-size: 26px;
+      color: #F3F4F4;
+
+      ::placeholder {
+        font-size: 16px;
+      }
+    }
+
+    .input {
+      margin-bottom: 16px;
+    }
+
+    .textarea-letter {
+      height: 219px;
+      resize: none;
+      padding: 7px 10px;
+    }
+
+  }
+
+
+  &-title {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  &__left {
+    width: 100%;
+    max-width: 272px;
+  }
+
+  &__desc {
+    margin-bottom: 25px;
+    color: $color-secondary-300;
+    text-align: end;
+
+    &-date {
+      display: block;
+      font-weight: 800;
+      color: $white;
+    }
+
+    &-text {
+      color: $white;
+      font-weight: 300;
+    }
+  }
+
+  &__btn {
+    width: 100%;
+    padding: 10px 30px;
+    text-transform: uppercase;
+  }
+
+  &__right {
+    width: 100%;
+    max-width: 312px;
+  }
+
+  &-logo {
+    margin-bottom: 50px;
+
+    &__img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  &-course {
+    width: 485px;
+    padding: 40px 40px 160px;
+
+    &-title {
+      color: #E2E1E1;
+      font-size: 30px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      margin-bottom: 30px;
+    }
+
+    .modal__btn {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    &-logo {
+      position: absolute;
+      bottom: 20px;
+    }
+
+  }
+
+  &__form {
+    &-course {
+      @include flex(space-between, flex-end);
+    }
+  }
+
+  &-check__text {
+    font-size: 14px;
+    color: #7B8EA9;
+    line-height: 130%;
+  }
+
+  .fancybox-button {
+    display: none;
+  }
+
+  & .input::placeholder {
+    font-size: 16px;
+  }
+}
+
+.fancybox__backdrop {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.carousel__button {
+  display: none !important;
+  background: #414F62;
+  color: #232C38 !important;
+  border-radius: 10px;
+  right: -40px !important;
+  transition: all 0.3s;
+  box-shadow: 0 4px 8px 0 #00000099;
+
+  &:hover, {
+    background: #798FAA;
+  }
+}

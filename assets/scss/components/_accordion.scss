@@ -1,0 +1,232 @@
+.accordion {
+  overflow: hidden;
+  background-color: transparent;
+  border: 1px solid #2F3C4A;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(0, 1, 2, 0.5);
+
+  &-profile {
+    border: 1px solid $color-secondary-900;
+  }
+
+  &__content {
+    &-top {
+      @include flex;
+
+      padding: 10px 24px;
+      background-color: $color-secondary-850;
+    }
+
+    &-center {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      padding: 70px 0;
+    }
+  }
+
+  &__item {
+    background-color: rgba(35, 44, 56, 0.7);
+    border-bottom: 1px solid $color-secondary-800;
+    backdrop-filter: blur(24px);
+
+    &:first-child {
+      border-radius: 10px 10px 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 10px 10px;
+      border: 0;
+    }
+
+  }
+
+  &__title {
+    position: relative;
+    display: block;
+    padding: 14px 60px 14px 23px;
+    font-size: 26px;
+    color: #F3F4F4;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s;
+    transition-timing-function: cubic-bezier(0.19, 0.18, 0.9, 0.9);
+
+    &-profile {
+      @include font(17px, false, 700);
+
+      border-bottom: 1px solid $color-secondary-900;
+    }
+  }
+
+  &-project {
+    cursor: initial;
+  }
+
+  .input {
+    margin-bottom: 10px;
+    background-color: $color-secondary-970;
+  }
+
+  textarea {
+    padding: 10px;
+    resize: none;
+  }
+}
+
+// .accordion__item .accordion__title:hover {
+//   background-color: $color-secondary-800;
+//   transition: all 0.5s ease-out;
+// }
+.accordion__item .accordion-active {
+  background-color: $color-secondary-800;
+}
+
+.accordion__item .accordion__title .accordion__arrow {
+  position: absolute;
+  top: 20px;
+  right: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  color: $color-text-light;
+  line-height: 30px;
+  font-size: 20px;
+  font-weight: 700;
+  margin-right: 5px;
+  background-color: $color-secondary-400;
+  border-radius: 50%;
+  transition: all 0.3s ease-out;
+
+  &-profile {
+    top: 10px;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: $color-primary-400;
+  }
+}
+
+.accordion__title-text-profile {
+  color: $color-secondary-400;
+}
+
+.accordion__button-box {
+  text-align: end;
+}
+
+.accordion__input {
+  height: 40px;
+  padding-right: 110px;
+  background-image: url("#{$path}buttons/input-pixel-blue.svg");
+  background-repeat: no-repeat;
+  background-position: right;
+}
+
+.accordion__arrow-item {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url("../images/icons/accordion-arrow.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+
+  &-profile {
+    background-image: url("../images/icons/plus-exit.svg");
+  }
+}
+
+.accordion__arrow-profile:not(.accordion__rotate) {
+  transform: rotate(45deg);
+}
+
+.accordion__title-profile {
+  background-color: $color-secondary-850 !important;
+}
+
+.accordion__item .accordion__rotate {
+  transform: rotate(180deg);
+  background-color: $color-primary-400 !important;
+}
+
+
+.accordion__item .accordion__content {
+  display: none;
+  padding: 0 24px 35px;
+  background-color: $color-secondary-800;
+}
+
+.accordion__content-profile {
+  padding-top: 10px !important;
+  background-color: $color-secondary-850 !important;
+}
+
+.accordion__content-inner {
+  max-width: 720px;
+  letter-spacing: 0.06em;
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 153%;
+  color: #F3F4F4;
+}
+
+.accordion__item .accordion__arrow-item {
+  font-weight: 700;
+}
+
+.accordion__textarea {
+  height: 330px;
+  outline: none;
+}
+
+.accordion__content-drop {
+  padding: 0 !important;
+  background-image: url("#{$path}projects/project-bg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.accordion__content-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $color-secondary-850;
+
+  & .bar-element {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+}
+
+.accordion-wrapper__btn {
+  padding-right: 24px;
+}
+.accordion__content-bottom.active{
+  justify-content: end;
+}
+.accordion__content-bottom.active .panel-bar{
+  display: none;
+}
+.accordion__content-bottom.active .accordion-wrapper__btn{
+  padding-bottom: 17px;
+  padding-top: 17px;
+}
+.accordion__edit {
+  position: absolute;
+  display: none;
+  z-index: 4;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background: #202833 !important;
+  /* width: 100%; */
+  height: 100%;
+  top: 0;
+
+  &.active {
+    display: block;
+  }
+}

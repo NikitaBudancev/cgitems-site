@@ -1,0 +1,138 @@
+.form {
+  &-control {
+    display: block;
+    padding: 6px 39px;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 140%;
+    color: $color-text-light;
+    background: $color-secondary-940;
+    background-image: url(#{$path}forms/form-darck.svg);
+    background-repeat: no-repeat;
+    background-position: left center;
+    border: 1px solid $color-secondary-820;
+    border-radius: 60px;
+
+    &-search {
+      position: relative;
+      background: url(#{$path}forms/form-darck.svg) no-repeat left center, $color-secondary-940;
+      height: 32px;
+      transition: all 0.3s;
+      font-weight: 400;
+
+      &::placeholder {
+        font-weight: 400;
+        color: #68788F;
+      }
+
+      &:focus,
+      &:hover,
+      &:active {
+        outline: none;
+        background-color: $color-secondary-970;
+      }
+    }
+
+    &:focus,
+    &:active {
+      outline: none;
+    }
+  }
+
+
+  &__policy {
+    @include font(13px, $color-secondary-500, 300);
+
+    &-sidebar {
+      margin-bottom: 20px;
+    }
+  }
+
+  &__textarea-box {
+    padding: 0 24px;
+  }
+
+  &-search {
+    &-header {
+      position: relative;
+    }
+  }
+
+}
+
+.check {
+  &__container {
+    position: relative;
+    display: flex;
+    padding-left: 30px;
+    margin-top: 30px;
+
+    &-dark {
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+  }
+
+  &__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  &__box {
+    position: absolute;
+    top: 3px;
+    width: 24px;
+    height: 24px;
+    margin-left: -30px;
+    cursor: pointer;
+    background-color: $color-light-200;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+
+    &-dark {
+      width: 12px;
+      height: 12px;
+      margin-left: -20px;
+      background-color: $color-primary-400;
+      border-radius: 2px;
+    }
+  }
+
+  &__input:checked + &__box {
+    background-image: url("#{$path}/icons/form-ckeck.svg");
+  }
+
+  &__input-dark:checked + &__box {
+    background-image: url("#{$path}icons/check-box.svg");
+  }
+}
+
+
+.btn-search {
+  position: absolute;
+  background-color: transparent;
+  top: 0;
+  right: 0;
+  height: 100%;
+  padding: 0;
+  width: 32px;
+
+  svg {
+    transition: all 0.3s;
+    fill: #68788F;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  &:hover,
+  &:focus {
+    svg {
+      fill: #798FAA;
+    }
+  }
+}

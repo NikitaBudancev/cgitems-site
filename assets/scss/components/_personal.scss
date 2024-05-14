@@ -1,0 +1,29 @@
+.personal {
+  padding: 0 24px;
+  .input {
+    height: 32px;
+    margin-bottom: 12px;
+
+    &-dark {
+      background-color: $color-secondary-970;
+    }
+
+    &__text {
+      @include font(14px, $color-secondary-400, 400);
+    }
+  }
+
+  .social__link-dark {
+    min-width: 32px;
+    margin-left: 12px;
+    background-color: $color-secondary-970;
+    border: 0;
+  }
+
+  &__socials {
+    .input__box {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}
