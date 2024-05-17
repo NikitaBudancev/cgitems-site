@@ -5,11 +5,11 @@
         v-for="stage in data.result"
         :key="stage.id"
         @click="changeStage(stage.id)"
-        :class="{
-          'bar-element': true,
-          'bar-element-project': true,
-          active: activeStageId === stage.id,
-        }"
+        :class="[
+          'bar-element',
+          'bar-element-project',
+          { active: activeStage === stage.id },
+        ]"
         type="button"
       >
         <span class="bar-element-title">{{ stage.name }}</span>
@@ -22,15 +22,20 @@
 <script setup lang="ts">
 import apiPoints from '~/constants/apiPoints';
 
-const { data, pending } = await useApiFetch(apiPoints.stages);
-
-const props = defineProps<{ activeStageId: number | null }>();
-
-const emit = defineEmits<{
-  (e: 'changeActiveStage', stageId: number): void;
+const props = defineProps<{
+  activeStageId: number | 0;
 }>();
 
+const emit = defineEmits<{ (e: 'changeActiveStage', stageId: number): void }>();
+
+const activeStage = ref(props.activeStageId || 0);
+
+const { data, pending } = await useApiFetch(apiPoints.stages);
+
 const changeStage = (stageId: number) => {
+  if (activeStage.value === stageId) return;
+
+  activeStage.value = stageId;
   emit('changeActiveStage', stageId);
 };
 </script>
