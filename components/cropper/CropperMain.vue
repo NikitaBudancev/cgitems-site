@@ -9,7 +9,6 @@
         :src="imageUrl"
         alt="Image for cropping"
       />
-
       <div>
         <button @click="emitCroppedImage" type="button">Сохранить</button>
       </div>
@@ -24,32 +23,40 @@ import 'cropperjs/dist/cropper.css';
 const props = defineProps({
   options: {
     type: Object,
-    default: () => {
-      return {
-        aspectRatio: 16 / 9,
-        viewMode: 1, // или 2, 3 в зависимости от желаемого поведения
-      };
-    },
+    default: () => ({
+      aspectRatio: 16 / 9,
+      viewMode: 1,
+      dragMode: 'none',
+      cropBoxResizable: false,
+    }),
+  },
+  cropBoxData: {
+    type: Object,
+    default: () => ({
+      width: 1920,
+      height: 1080,
+    }),
   },
 });
 
-const imageUrl = ref(null);
-const imageElement = ref(null);
-const popupProjectCropper = ref(null);
+const imageUrl = ref<string | undefined>(undefined);
+const imageElement = ref<HTMLImageElement | null>(null);
+const popupProjectCropper = ref<any>(null);
 let originalFileType = '';
 
-let cropper = null;
+let cropper: Cropper | null = null;
 
 const emit = defineEmits(['cropped']);
 
-const onFileChange = (event) => {
-  const file = event.target.files[0];
+const onFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
   if (file) {
     originalFileType = file.type;
 
     const reader = new FileReader();
     reader.onload = async (e) => {
-      imageUrl.value = e.target.result;
+      imageUrl.value = e.target?.result as string;
       popupProjectCropper.value.open();
 
       await nextTick();
@@ -57,17 +64,11 @@ const onFileChange = (event) => {
       if (cropper) {
         cropper.destroy();
       }
-      cropper = new Cropper(imageElement.value, {
+      cropper = new Cropper(imageElement.value as HTMLImageElement, {
         ...props.options,
-
-        ready: function () {
-          cropper.setCropBoxData({
-            width: 1920, // Ширина вырезаемой области
-            height: 1080, // Высота вырезаемой области
-          });
+        ready: () => {
+          cropper?.setCropBoxData(props.cropBoxData);
         },
-        dragMode: false,
-        cropBoxResizable: false,
       });
     };
     reader.readAsDataURL(file);
@@ -77,16 +78,17 @@ const onFileChange = (event) => {
 const emitCroppedImage = () => {
   if (cropper) {
     cropper.getCroppedCanvas().toBlob((blob) => {
-      const croppedFile = new Blob([blob], { type: originalFileType });
-      const newFileName = `${generateRandomString(10)}${getExtensionFromMimeType(originalFileType)}`;
+      if (blob) {
+        const croppedFile = new Blob([blob], { type: originalFileType });
+        const newFileName = `${generateRandomString(10)}${getExtensionFromMimeType(originalFileType)}`;
 
-      emit('cropped', croppedFile, newFileName);
+        emit('cropped', croppedFile, newFileName);
+        popupProjectCropper.value.close();
 
-      popupProjectCropper.value.close();
-
-      setTimeout(() => {
-        cropper.destroy();
-      }, 300);
+        setTimeout(() => {
+          cropper?.destroy();
+        }, 300);
+      }
     }, originalFileType);
   }
 };
