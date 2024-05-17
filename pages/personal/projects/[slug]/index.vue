@@ -53,7 +53,7 @@
               </div>
             </div>
             <div class="accordion__item-content-right">
-              <a class="project_back" href="/personal/">
+              <NuxtLink class="project_back" to="/personal/">
                 <svg
                   width="19"
                   height="16"
@@ -66,7 +66,8 @@
                     fill="#202833"
                   ></path>
                 </svg>
-              </a>
+              </NuxtLink>
+
               <UploaderImageProject
                 :mediaItems="currentProjectStage?.media"
                 :stageId="currentProjectStage?.id"
@@ -78,25 +79,10 @@
           </div>
 
           <div class="accordion__content-bottom-new">
-            <div class="panel-bar">
-              <div class="panel-bar-elements">
-                <button
-                  v-for="stage in stagesData?.result"
-                  :key="stage.id"
-                  :class="[
-                    'bar-element bar-element-project',
-                    {
-                      active:
-                        currentProjectStage &&
-                        currentProjectStage.property.id == stage.id,
-                    },
-                  ]"
-                >
-                  <span class="bar-element-title">{{ stage.name }}</span>
-                  <span class="bar-element-subtitle">{{ stage.count }}</span>
-                </button>
-              </div>
-            </div>
+            <StageButtons
+              @changeActiveStage="handleChangeStage"
+              :activeStageId="currentProjectStage?.property.id"
+            />
             <div class="accordion-wrapper__btn">
               <div class="accordion-project_type">
                 <input type="hidden" name="project_type" value="41" />
@@ -138,15 +124,6 @@ const { data: projectData, pending: projectPending } = await useAuthFetch(
   { lazy: true },
 );
 
-// const { data: stagesData, pending: stagesPending } = await useApiFetch(
-//   apiPoints.stages,
-//   {},
-//   { lazy: true },
-// );
-
-const stagesData = ref([]);
-const stagesPending = ref(false);
-
 watchEffect(() => {
   if (projectData.value && projectData.value?.result) {
     projectFields.name = projectData.value.result.name;
@@ -162,4 +139,8 @@ watchEffect(() => {
     }
   }
 });
+
+const handleChangeStage = (stageId: number) => {
+  console.log(stageId);
+};
 </script>
