@@ -1,5 +1,5 @@
 <template>
-  <div class="articles" v-if="!projectPending && !stagesPending">
+  <div class="articles" v-if="!pending">
     <div class="articles__center articles__center-profile">
       <div class="accordion accordion-profile">
         <form
@@ -53,7 +53,7 @@
               </div>
             </div>
             <div class="accordion__item-content-right">
-              <a class="project_back" href="/personal/">
+              <NuxtLink class="project_back" to="/personal/">
                 <svg
                   width="19"
                   height="16"
@@ -66,10 +66,12 @@
                     fill="#202833"
                   ></path>
                 </svg>
-              </a>
-              <UploaderImageProject
-                :mediaItems="currentProjectStage?.media"
-                :stageId="currentProjectStage?.id"
+              </NuxtLink>
+
+              <ProjectMediaManager
+                v-if="projectStages"
+                :mediaItems="projectStages[activeStageIndex]?.media"
+                :stageId="projectStages[activeStageIndex]?.id"
               />
               <div class="error_new_block">
                 Типы файлов: jpeg, png<br />Размер не более: 5MB
@@ -78,25 +80,11 @@
           </div>
 
           <div class="accordion__content-bottom-new">
-            <div class="panel-bar">
-              <div class="panel-bar-elements">
-                <button
-                  v-for="stage in stagesData?.result"
-                  :key="stage.id"
-                  :class="[
-                    'bar-element bar-element-project',
-                    {
-                      active:
-                        currentProjectStage &&
-                        currentProjectStage.property.id == stage.id,
-                    },
-                  ]"
-                >
-                  <span class="bar-element-title">{{ stage.name }}</span>
-                  <span class="bar-element-subtitle">{{ stage.count }}</span>
-                </button>
-              </div>
-            </div>
+            <StageButtons
+              v-if="projectStages"
+              @changeActiveStage="handleChangeStage"
+              :activeStageId="projectStages[activeStageIndex]?.property?.id"
+            />
             <div class="accordion-wrapper__btn">
               <div class="accordion-project_type">
                 <input type="hidden" name="project_type" value="41" />
@@ -108,15 +96,12 @@
             </div>
           </div>
         </form>
-        <button @click="test">test123</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-console.log('project');
-
 import apiPoints from '~/constants/apiPoints';
 
 definePageMeta({
@@ -125,41 +110,56 @@ definePageMeta({
 });
 
 const route = useRoute();
-const currentProjectStage = ref<ProjectStage | null>(null);
+const activeStageIndex = ref<number>(0);
+const projectStages = ref<[ProjectStage] | null>(null);
 
 const projectFields = reactive({
   name: '',
   projectDescription: '',
 });
 
-const { data: projectData, pending: projectPending } = await useAuthFetch(
+const { data, pending } = await useAuthFetch(
   apiPoints.meProject(route.params.slug as string),
   {},
   { lazy: true },
 );
 
-// const { data: stagesData, pending: stagesPending } = await useApiFetch(
-//   apiPoints.stages,
-//   {},
-//   { lazy: true },
-// );
-
-const stagesData = ref([]);
-const stagesPending = ref(false);
-
 watchEffect(() => {
-  if (projectData.value && projectData.value?.result) {
-    projectFields.name = projectData.value.result.name;
-    projectFields.projectDescription =
-      projectData.value.result.projectDescription;
+  const projectResult = data.value?.result as Project;
+  projectStages.value = projectResult.stages as [ProjectStage];
 
-    if (projectData.value.result.stages) {
-      currentProjectStage.value = projectData.value.result.stages.reduce(
-        (max, current) => {
-          return max.property.id > current.property.id ? max : current;
-        },
-      );
-    }
+  if (projectResult && projectResult.stages) {
+    projectFields.name = projectResult.name || '';
+    projectFields.projectDescription = projectResult.projectDescription || '';
+
+    activeStageIndex.value = projectStages.value.reduce(
+      (maxIndex, item, index, array) => {
+        return item.property.id > array[maxIndex].property.id
+          ? index
+          : maxIndex;
+      },
+      0,
+    );
   }
 });
+
+const handleChangeStage = (stageId: number) => {
+  const index = projectStages.value.findIndex(
+    (stage) => stage.property.id === stageId,
+  );
+
+  if (index !== -1 && index !== undefined) {
+    activeStageIndex.value = index;
+  } else {
+    const newStage = {
+      id: null,
+      media: null,
+      preview: null,
+      property: { id: stageId },
+    };
+
+    projectStages.value.push(newStage);
+    activeStageIndex.value = stageId - 1;
+  }
+};
 </script>
