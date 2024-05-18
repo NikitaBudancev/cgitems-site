@@ -95,12 +95,12 @@
           </li>
         </ul>
         <ul v-else class="projects__list projects__list-p">
-          <li v-for="project in projects" :key="project.id" class="project">
+          <li v-for="project in projects" :key="project?.id" class="project">
             <img
               width="448"
               height="270"
               class="project__img"
-              :src="project.stage.preview.large"
+              :src="project.stage?.preview.large"
               alt="Lightpoles Asset"
             />
             <NuxtLink

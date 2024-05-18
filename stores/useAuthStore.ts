@@ -22,7 +22,9 @@ export const useAuthStore = defineStore('auth', () => {
 
   const fetchUser = async () => {
     try {
-      const userCookie = useCookie('user-data');
+      const userCookie = useCookie('user-data', {
+        expires: new Date(new Date().getTime() + 10 * 60 * 1000),
+      });
 
       if (userCookie.value) {
         user.value = userCookie.value as User;

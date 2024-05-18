@@ -45,12 +45,12 @@
         <template v-if="!pending">
           <div
             v-for="project in data.result"
-            :key="project.id"
+            :key="project?.id"
             class="project project-sidebar"
           >
             <img
               class="project__img"
-              :src="project.stage.preview.large"
+              :src="project.stage?.preview.large"
               :alt="project.name"
             />
             <NuxtLink
