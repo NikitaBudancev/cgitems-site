@@ -95,7 +95,9 @@
 </template>
 
 <script setup lang="ts">
+import { transform } from 'typescript';
 import apiPoints from '~/constants/apiPoints';
+import { cacheConfig } from '~/types/cacheConfig';
 
 definePageMeta({
   layout: 'personal',
@@ -103,10 +105,17 @@ definePageMeta({
 });
 
 const { data, pending } = await useAsyncData(
-  'me-projects',
+  cacheConfig.meProjects.key,
   () => {
-    return useAuthFetch(apiPoints.meProjects());
+    return useFetchData(apiPoints.meProjects(), {
+      isAuth: true,
+    });
   },
-  { lazy: true },
+  {
+    lazy: true,
+    transform: transformData,
+    getCachedData: (key) =>
+      initCachedData(key, cacheConfig.meProjects.durationMinutes),
+  },
 );
 </script>

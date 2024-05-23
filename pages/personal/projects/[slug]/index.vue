@@ -103,6 +103,7 @@
 
 <script setup lang="ts">
 import apiPoints from '~/constants/apiPoints';
+import type { ApiResponse } from '~/types/response/apiResponse';
 
 definePageMeta({
   layout: 'personal',
@@ -119,15 +120,21 @@ const projectFields = reactive({
 });
 
 const slug = route.params.slug as string;
+const cacheKey = `project-${slug}`;
 
 const { data, pending } = await useAsyncData(
-  `project-${slug}`,
+  cacheKey,
   () => {
-    return useAuthFetch<ApiResponse<Project>>(
+    return useFetchData<ApiResponse<Project>>(
       apiPoints.meProject(route.params.slug as string),
+      { isAuth: true },
     );
   },
-  { lazy: true },
+  {
+    lazy: true,
+    transform: transformData,
+    getCachedData: (key) => initCachedData(key, 10),
+  },
 );
 
 watchEffect(() => {

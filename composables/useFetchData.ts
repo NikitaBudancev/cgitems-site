@@ -1,18 +1,42 @@
-export async function useFetchData<T>(fetcher: () => Promise<T>) {
-  const data: Ref<T | null> = ref(null);
-  const pending = ref(true);
-  const error: Ref<{ message?: string; data?: any } | null> = ref(null);
+import type { RequestOptions } from '~/types/requestOptions';
+interface FetchOptions {
+  options?: RequestOptions;
+  isDefaultApiPath?: boolean;
+  isAuth?: boolean;
+}
 
-  try {
-    data.value = await fetcher();
-  } catch (err: any) {
-    error.value = {
-      message: err.message,
-      data: err.data,
-    };
-  } finally {
-    pending.value = false;
+export async function useFetchData<T>(
+  path: string,
+  { options = {}, isDefaultApiPath = true, isAuth = false }: FetchOptions = {},
+) {
+  const config = useRuntimeConfig();
+  const headers: Record<string, string> = { accept: 'application/json' };
+
+  let apiUrl = path;
+  if (isDefaultApiPath) {
+    apiUrl = `${config.public.apiHost}${config.public.apiPath}${path}`;
   }
 
-  return { data, pending, error };
+  if (isAuth) {
+    const token = useCookie('XSRF-TOKEN');
+
+    if (token.value) {
+      headers['X-XSRF-TOKEN'] = token.value;
+    }
+
+    if (process.server) {
+      headers['referer'] = config.public.host;
+      Object.assign(headers, useRequestHeaders(['cookie']));
+    } else {
+      Object.assign(headers, options.headers || {});
+    }
+  }
+
+  const response = await $fetch<T>(apiUrl, {
+    ...options,
+    headers,
+    ...(isAuth ? { credentials: 'include' } : {}),
+  });
+
+  return { ...response, fetchedAt: new Date() };
 }

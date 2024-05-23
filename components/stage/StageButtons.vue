@@ -30,7 +30,13 @@ const emit = defineEmits<{ (e: 'changeActiveStage', stageId: number): void }>();
 
 const activeStage = ref(props.activeStageId || 0);
 
-const { data, pending } = await useApiFetch(apiPoints.stages);
+const { data, pending } = await useAsyncData(
+  'stages',
+  () => {
+    return useFetchData(apiPoints.stages);
+  },
+  { lazy: true },
+);
 
 const changeStage = (stageId: number) => {
   if (activeStage.value === stageId) return;

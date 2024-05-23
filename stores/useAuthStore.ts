@@ -3,6 +3,7 @@ import { type Credentials } from '~/types/credentials';
 import { Roles } from '~/constants/roles';
 import { Paths } from '~/constants/paths';
 import apiPoints from '~/constants/apiPoints';
+import type { ApiResponse } from '~/types/response/apiResponse';
 
 export const useAuthStore = defineStore('auth', () => {
   const config = useRuntimeConfig();
@@ -14,15 +15,16 @@ export const useAuthStore = defineStore('auth', () => {
   const fetchSanctum = async () => {
     const urlSanctum = config.public.apiHost + apiPoints.sanctum;
 
-    await useFetchData(() => {
-      return useAuthFetch<ApiResponse>(urlSanctum, {}, false);
+    await useFetchData<ApiResponse>(urlSanctum, {
+      isDefaultApiPath: false,
+      isAuth: true,
     });
   };
 
   const fetchUser = async () => {
     try {
       const { data, error } = await useAsyncData('current-user', () => {
-        return useAuthFetch<ApiResponse<User>>(apiPoints.me);
+        return useFetchData<ApiResponse<User>>(apiPoints.me, { isAuth: true });
       });
 
       if (error.value) {
@@ -50,10 +52,13 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       await fetchSanctum();
 
-      let { data, error } = await useFetchData(() => {
-        return useAuthFetch<ApiResponse<User>>(apiPath, {
-          method: 'POST',
-          body: credentials,
+      let { data, error } = await useAsyncClientData(() => {
+        return useFetchData<ApiResponse<User>>(apiPath, {
+          options: {
+            method: 'POST',
+            body: credentials,
+          },
+          isAuth: true,
         });
       });
 
@@ -110,8 +115,13 @@ export const useAuthStore = defineStore('auth', () => {
     role.value = Roles.guest;
 
     try {
-      let { data } = await useFetchData(() => {
-        return useAuthFetch<ApiResponse>(apiPoints.logout, { method: 'POST' });
+      let { data } = await useAsyncClientData(() => {
+        return useFetchData<ApiResponse>(apiPoints.logout, {
+          options: {
+            method: 'POST',
+          },
+          isAuth: true,
+        });
       });
 
       if (!data.value?.success) {
