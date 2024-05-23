@@ -111,22 +111,30 @@ definePageMeta({
 
 const route = useRoute();
 const activeStageIndex = ref<number>(0);
-const projectStages = ref<[ProjectStage] | null>(null);
+const projectStages = ref<ProjectStage[] | null>(null);
 
 const projectFields = reactive({
   name: '',
   projectDescription: '',
 });
 
-const { data, pending } = await useAuthFetch(
-  apiPoints.meProject(route.params.slug as string),
-  {},
+const slug = route.params.slug as string;
+
+const { data, pending } = await useAsyncData(
+  `project-${slug}`,
+  () => {
+    return useAuthFetch<ApiResponse<Project>>(
+      apiPoints.meProject(route.params.slug as string),
+    );
+  },
   { lazy: true },
 );
 
 watchEffect(() => {
-  const projectResult = data.value?.result as Project;
-  projectStages.value = projectResult.stages as [ProjectStage];
+  if (!data.value) return;
+
+  const projectResult = data.value.result;
+  projectStages.value = projectResult.stages;
 
   if (projectResult && projectResult.stages) {
     projectFields.name = projectResult.name || '';
@@ -144,6 +152,8 @@ watchEffect(() => {
 });
 
 const handleChangeStage = (stageId: number) => {
+  if (!projectStages.value) return;
+
   const index = projectStages.value.findIndex(
     (stage) => stage.property.id === stageId,
   );

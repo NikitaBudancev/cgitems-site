@@ -102,12 +102,11 @@ definePageMeta({
   middleware: ['auth', 'verified'],
 });
 
-const { data, pending, error } = await useAuthFetch(
-  apiPoints.meProjects(),
-  {},
+const { data, pending } = await useAsyncData(
+  'me-projects',
+  () => {
+    return useAuthFetch(apiPoints.meProjects());
+  },
   { lazy: true },
 );
-
-console.log('personal projects')
-
 </script>

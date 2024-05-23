@@ -14,17 +14,16 @@ export const useAuthStore = defineStore('auth', () => {
   const fetchSanctum = async () => {
     const urlSanctum = config.public.apiHost + apiPoints.sanctum;
 
-    await useFetch(urlSanctum, {
-      credentials: 'include',
-      watch: false,
+    await useFetchData(() => {
+      return useAuthFetch<ApiResponse>(urlSanctum, {}, false);
     });
   };
 
   const fetchUser = async () => {
     try {
-      const { data, error } = await useAuthFetch<ApiResponse<User>>(
-        apiPoints.me,
-      );
+      const { data, error } = await useAsyncData('current-user', () => {
+        return useAuthFetch<ApiResponse<User>>(apiPoints.me);
+      });
 
       if (error.value) {
         throw new Error(
@@ -51,9 +50,11 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       await fetchSanctum();
 
-      const { data, error } = await useAuthFetch<ApiResponse<User>>(apiPath, {
-        method: 'POST',
-        body: credentials,
+      let { data, error } = await useFetchData(() => {
+        return useAuthFetch<ApiResponse<User>>(apiPath, {
+          method: 'POST',
+          body: credentials,
+        });
       });
 
       if (error.value) {
@@ -109,20 +110,17 @@ export const useAuthStore = defineStore('auth', () => {
     role.value = Roles.guest;
 
     try {
-      const { data, error } = await useAuthFetch<ApiResponse>(
-        apiPoints.logout,
-        { method: 'POST' },
-      );
+      let { data } = await useFetchData(() => {
+        return useAuthFetch<ApiResponse>(apiPoints.logout, { method: 'POST' });
+      });
 
-      if (error.value) {
-        throw new Error(error.value.message || 'Ошибка при выходе из системы');
+      if (!data.value?.success) {
+        throw new Error('Ошибка при выходе из системы');
       }
 
-      if (data.value?.success) {
-        const token = useCookie('XSRF-TOKEN');
+      const token = useCookie('XSRF-TOKEN');
 
-        token.value = null;
-      }
+      token.value = null;
     } catch (error) {
       console.error('Ошибка при выходе из системы:', error);
     }

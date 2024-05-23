@@ -3,7 +3,7 @@ import type { RequestOptions } from '~/types/requestOptions';
 export function useAuthFetch<T>(
   path: string | (() => string),
   options: RequestOptions = {},
-  optionsAsyncData = {},
+  isDefaultApiPath: boolean = true,
 ) {
   const token = useCookie('XSRF-TOKEN');
   const config = useRuntimeConfig();
@@ -13,7 +13,11 @@ export function useAuthFetch<T>(
     referer: config.public.host,
   };
 
-  const apiUrl = `${config.public.apiHost}${config.public.apiPath}${path}`;
+  const apiUrl = isDefaultApiPath
+    ? `${config.public.apiHost}${config.public.apiPath}${path}`
+    : path;
+
+    console.log(apiUrl);
 
   if (token.value) {
     headers['X-XSRF-TOKEN'] = token.value;
@@ -31,15 +35,9 @@ export function useAuthFetch<T>(
     };
   }
 
-  return useAsyncData<T>(
-    () =>
-      $fetch(apiUrl, {
-        ...options,
-        credentials: 'include',
-        headers,
-      }),
-    {
-      ...optionsAsyncData,
-    },
-  );
+  return $fetch<T>(apiUrl, {
+    ...options,
+    credentials: 'include',
+    headers,
+  });
 }

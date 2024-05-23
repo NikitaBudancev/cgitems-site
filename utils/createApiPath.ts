@@ -1,4 +1,3 @@
-// apiPaths.js
 export default (basePath: string, params = {}) => {
   const query = new URLSearchParams(params).toString();
 
