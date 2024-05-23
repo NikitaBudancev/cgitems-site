@@ -1,6 +1,4 @@
-interface RequestOptions {
-  headers?: Record<string, string>;
-}
+import type { RequestOptions } from "~/types/requestOptions";
 
 interface AsyncDataOptions {
   transform?: (input: any) => any;
@@ -8,7 +6,7 @@ interface AsyncDataOptions {
   lazy?: boolean;
 }
 
-export function useApiFetch(
+export function useApiFetch<T>(
   path: string | (() => string),
   options: RequestOptions = {},
   asyncDataOptions: AsyncDataOptions = {},
@@ -22,7 +20,7 @@ export function useApiFetch(
 
   const key = apiUrl;
 
-  return useAsyncData(
+  return useAsyncData<T>(
     key,
     async () => {
       const response = await $fetch(apiUrl, {

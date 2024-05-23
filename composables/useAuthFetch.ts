@@ -1,15 +1,13 @@
-interface RequestOptions {
-  headers?: Record<string, string>;
-  // Другие свойства options...
-}
+import type { RequestOptions } from '~/types/requestOptions';
 
-export function useAuthFetch(
+export function useAuthFetch<T>(
   path: string | (() => string),
-  options: RequestOptions = {}, // Задаем тип для options
+  options: RequestOptions = {},
   optionsAsyncData = {},
 ) {
   const token = useCookie('XSRF-TOKEN');
   const config = useRuntimeConfig();
+
   let headers: Record<string, string> = {
     accept: 'application/json',
     referer: config.public.host,
@@ -33,7 +31,7 @@ export function useAuthFetch(
     };
   }
 
-  return useAsyncData(
+  return useAsyncData<T>(
     () =>
       $fetch(apiUrl, {
         ...options,
