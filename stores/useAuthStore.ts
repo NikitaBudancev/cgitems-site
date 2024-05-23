@@ -1,13 +1,13 @@
 import { type User } from '~/types/user';
 import { type Credentials } from '~/types/credentials';
-import { ROLE_GUEST } from '~/constants/roles';
-import { HOME_PATH, PERSONAL_PATH, VERIFICATION_PATH } from '~/constants/paths';
+import { Roles } from '~/constants/roles';
+import { Paths } from '~/constants/paths';
 import apiPoints from '~/constants/apiPoints';
 
 export const useAuthStore = defineStore('auth', () => {
   const config = useRuntimeConfig();
   const user = ref<User | null>(null);
-  const role = ref<string>(ROLE_GUEST);
+  const role = ref<string>(Roles.guest);
 
   const isLoggedIn = computed(() => !!user.value);
 
@@ -22,32 +22,21 @@ export const useAuthStore = defineStore('auth', () => {
 
   const fetchUser = async () => {
     try {
-      const userCookie = useCookie('user-data', {
-        expires: new Date(new Date().getTime() + 10 * 60 * 1000),
-      });
+      const { data, error } = await useAuthFetch<ApiResponse<User>>(
+        apiPoints.me,
+      );
 
-      if (userCookie.value) {
-        user.value = userCookie.value as User;
-        role.value = userCookie.value.role;
-
-        return;
-      }
-
-      const response = await useAuthFetch(apiPoints.me);
-
-      if (response.error.value) {
-        console.error('Ошибка при запросе пользователя:', response.error.value);
+      if (error.value) {
         throw new Error(
-          response.error.value.data.message ||
-            'Ошибка при запросе данных пользователя',
+          error.value.message || 'Ошибка при запросе данных пользователя',
         );
       }
 
-      if (response.data.value?.success) {
-        user.value = response.data.value.result as User;
-        role.value = response.data.value.result.role;
+      const userData = data.value;
 
-        userCookie.value = user.value;
+      if (userData) {
+        user.value = userData.result;
+        role.value = userData.result.role;
       }
     } catch (error) {
       console.error('Ошибка в fetchUser:', error);
@@ -62,18 +51,22 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       await fetchSanctum();
 
-      const response = await useAuthFetch(apiPath, {
+      const { data, error } = await useAuthFetch<ApiResponse<User>>(apiPath, {
         method: 'POST',
         body: credentials,
       });
 
-      if (response.error.value?.data) {
-        return response.error.value.data;
+      if (error.value) {
+        throw new Error(
+          error.value.message || 'Ошибка при запросе данных пользователя',
+        );
       }
 
-      if (response.data.value?.success) {
-        user.value = response.data.value?.result as User;
-        role.value = user.value.role;
+      const userData = data.value;
+
+      if (userData) {
+        user.value = userData.result;
+        role.value = userData.result.role;
 
         if (redirectPath) {
           navigateTo(redirectPath);
@@ -84,40 +77,54 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-  const register = async (credentials: Credentials) => {
-    await handleAuthentication(
-      apiPoints.register,
-      credentials,
-      VERIFICATION_PATH,
-    );
+  const register = async (credentials: Credentials): Promise<void> => {
+    try {
+      await handleAuthentication(
+        apiPoints.register,
+        credentials,
+        Paths.Verification,
+      );
+    } catch (error) {
+      console.error('Ошибка при регистрации:', error);
+    }
   };
 
-  const login = async (credentials: Credentials) => {
-    await handleAuthentication(apiPoints.login, credentials, PERSONAL_PATH);
+  const login = async (credentials: Credentials): Promise<void> => {
+    try {
+      await handleAuthentication(apiPoints.login, credentials, Paths.Personal);
+    } catch (error) {
+      console.error('Ошибка при аутентификации:', error);
+    }
   };
 
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     const route = useRoute();
-    const isPersonalPath = route.path.startsWith(PERSONAL_PATH);
+    const isPersonalPath = route.path.startsWith(Paths.Personal);
 
     if (isPersonalPath) {
-      navigateTo(HOME_PATH);
+      navigateTo(Paths.Home);
     }
 
     user.value = null;
-    role.value = ROLE_GUEST;
+    role.value = Roles.guest;
 
     try {
-      const response = await useAuthFetch(apiPoints.logout, { method: 'POST' });
-      if (response.data.value?.success) {
-        const token = useCookie('XSRF-TOKEN');
-        const userCookie = useCookie('user-data');
+      const { data, error } = await useAuthFetch<ApiResponse>(
+        apiPoints.logout,
+        { method: 'POST' },
+      );
 
-        userCookie.value = null;
+      if (error.value) {
+        throw new Error(error.value.message || 'Ошибка при выходе из системы');
+      }
+
+      if (data.value?.success) {
+        const token = useCookie('XSRF-TOKEN');
+
         token.value = null;
       }
     } catch (error) {
-      console.error(error);
+      console.error('Ошибка при выходе из системы:', error);
     }
   };
 

@@ -7,16 +7,18 @@ export default {
 
   stages: '/stages',
 
-  project: (slug: string) => createApiPath(`/projects/${slug}`),
-  projects: (params: object = {}) => createApiPath('/projects/', params),
+  project: (slug: string): string => createApiPath(`/projects/${slug}`),
+  projects: (params: object = {}): string =>
+    createApiPath('/projects/', params),
 
-  meProject: (slug: string) => createApiPath(`/me/projects/${slug}`),
-  meProjects: (params: object = {}) => createApiPath('/me/projects/', params),
+  meProject: (slug: string): string => createApiPath(`/me/projects/${slug}`),
+  meProjects: (params: object = {}): string =>
+    createApiPath('/me/projects/', params),
 
-  mediaProject: (id: number = 0) =>
-    id === 0
+  mediaProject: (id?: number): string =>
+    id
       ? createApiPath(`/me/projects/media`)
       : createApiPath(`/me/projects/media/${id}`),
 
-  article: (slug: string) => createApiPath(`/artiscles/${slug}`),
+  article: (slug: string): string => createApiPath(`/artiscles/${slug}`),
 };

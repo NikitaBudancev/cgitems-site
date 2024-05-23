@@ -1,8 +1,18 @@
+import type { Roles } from '~/constants/roles';
+
 export interface User {
   id: Number;
-  name: String;
+  firstName: String;
+  lastName: String;
+  initials: String;
   email: String;
   verified: String;
+  avatar: {
+    small: string;
+    medium: string;
+    larage: string;
+  };
+  role: Roles;
   info: {
     artstation: String;
     avatar: String;

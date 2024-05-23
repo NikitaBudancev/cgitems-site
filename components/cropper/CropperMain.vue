@@ -19,6 +19,7 @@
 <script setup lang="ts">
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
+import type { PopupMainMethods } from '~/types/popupMainMethods';
 
 const props = defineProps({
   options: {
@@ -41,7 +42,7 @@ const props = defineProps({
 
 const imageUrl = ref<string | undefined>(undefined);
 const imageElement = ref<HTMLImageElement | null>(null);
-const popupProjectCropper = ref<any>(null);
+const popupProjectCropper = ref<PopupMainMethods | null>(null);
 let originalFileType = '';
 
 let cropper: Cropper | null = null;
@@ -57,7 +58,7 @@ const onFileChange = (event: Event) => {
     const reader = new FileReader();
     reader.onload = async (e) => {
       imageUrl.value = e.target?.result as string;
-      popupProjectCropper.value.open();
+      popupProjectCropper.value?.open();
 
       await nextTick();
 
@@ -83,7 +84,7 @@ const emitCroppedImage = () => {
         const newFileName = `${generateRandomString(10)}${getExtensionFromMimeType(originalFileType)}`;
 
         emit('cropped', croppedFile, newFileName);
-        popupProjectCropper.value.close();
+        popupProjectCropper.value?.close();
 
         setTimeout(() => {
           cropper?.destroy();

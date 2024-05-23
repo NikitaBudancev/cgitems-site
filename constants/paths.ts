@@ -1,4 +1,13 @@
-export const HOME_PATH: string = '/';
-export const PERSONAL_PATH: string = '/personal/';
-export const AUTH_PATH: string = '/personal/auth/';
-export const VERIFICATION_PATH: string = '/personal/verification/';
+export enum Paths {
+  Home = '/',
+  Personal = '/personal/',
+  PersonalProjects = '/personal/projects/',
+  PersonalNewProject = '/personal/projects/new/',
+  Auth = '/personal/auth/',
+  Verification = '/personal/verification/',
+  Registration = '/personal/registration/',
+
+  Articles = '/articles/',
+  Slang = '/slang/',
+  Contacts = '/contacts/',
+}

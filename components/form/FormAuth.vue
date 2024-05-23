@@ -136,12 +136,17 @@
 </template>
 
 <script setup lang="ts">
+interface ErrorLogin {
+  success: boolean;
+  message: string;
+}
+
 const form = ref({
   email: '',
   password: '',
 });
 
-const errorLogin = ref({});
+const errorLogin = ref<ErrorLogin>();
 const isErrorLogin = computed(() => errorLogin.value?.success === false);
 
 const passwordType = ref('password');
@@ -154,9 +159,8 @@ const auth = useAuthStore();
 
 const handleLogin = async () => {
   try {
-    errorLogin.value = await auth.login(form.value);
+    await auth.login(form.value);
   } catch (error) {
-    console.error('Ошибка входа:', error);
     errorLogin.value = { success: false, message: 'Ошибка входа' };
   }
 };

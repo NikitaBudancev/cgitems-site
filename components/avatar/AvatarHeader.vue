@@ -3,13 +3,16 @@
     <AvatarMain
       :src="userImage"
       :isCircle="true"
-      :initials="user?.initials"
+      :initials="auth.user?.initials"
       size="32"
       :class="avatarClasses"
       @click="handle"
     />
 
-    <ul v-if="isLoggedIn" :class="'list profile__menu popup ' + popupClass">
+    <ul
+      v-if="auth.isLoggedIn"
+      :class="'list profile__menu popup ' + popupClass"
+    >
       <li class="profile__item">
         <NuxtLink class="profile__link icon-block" to="/personal/">
           <svg
@@ -73,14 +76,15 @@
 </template>
 
 <script setup lang="ts">
+import type { PopupMainMethods } from '~/types/popupMainMethods';
+
 const auth = useAuthStore();
-const { user, isLoggedIn } = storeToRefs(auth);
 
 const popupClass = ref('');
-const popupAuth = ref(null);
+const popupAuth = ref<PopupMainMethods | null>(null);
 
 const userClassesAndImage = computed(() => {
-  if (!isLoggedIn.value) {
+  if (!auth.isLoggedIn || !auth.user) {
     return {
       classes: 'logout',
       imageSrc: '/images/icons/icon-profile-union.svg',
@@ -88,7 +92,7 @@ const userClassesAndImage = computed(() => {
   } else {
     return {
       classes: '',
-      imageSrc: user.value?.avatar.small || '',
+      imageSrc: auth.user.avatar.small,
     };
   }
 });
@@ -101,7 +105,7 @@ const togglePopupClass = () => {
 };
 
 const handle = () => {
-  if (!isLoggedIn.value) {
+  if (!auth.isLoggedIn) {
     popupAuth.value?.open();
   } else {
     togglePopupClass();

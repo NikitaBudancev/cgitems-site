@@ -1,9 +1,9 @@
-import { AUTH_PATH, PERSONAL_PATH } from '~/constants/paths';
+import { Paths } from '~/constants/paths';
 
 export default defineNuxtRouteMiddleware(() => {
   const auth = useAuthStore();
 
-  if (!auth.isLoggedIn) return navigateTo(AUTH_PATH);
+  if (!auth.isLoggedIn) return navigateTo(Paths.Auth);
 
-  if (auth.user?.verified) return navigateTo(PERSONAL_PATH);
+  if (auth.user?.verified) return navigateTo(Paths.Personal);
 });
