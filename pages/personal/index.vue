@@ -95,9 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { transform } from 'typescript';
-import apiPoints from '~/constants/apiPoints';
-import { cacheConfig } from '~/types/cacheConfig';
+import { apiPaths, cacheConfig } from '~/types';
 
 definePageMeta({
   layout: 'personal',
@@ -107,7 +105,7 @@ definePageMeta({
 const { data, pending } = await useAsyncData(
   cacheConfig.meProjects.key,
   () => {
-    return useFetchData(apiPoints.meProjects(), {
+    return useFetchData(apiPaths.meProjects(), {
       isAuth: true,
     });
   },

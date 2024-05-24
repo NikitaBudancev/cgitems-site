@@ -266,14 +266,13 @@
 </template>
 
 <script setup lang="ts">
-import apiPoints from '~/constants/apiPoints';
-import { cacheConfig } from '~/types/cacheConfig';
-import type { apiResponseProjects } from '~/types/response/apiResponseProjects';
+import type { apiResponseProjects } from '~/types';
+import { apiPaths, cacheConfig } from '~/types';
 
 const { data, pending } = useAsyncData(
   cacheConfig.projects.key,
   () => {
-    return useFetchData<apiResponseProjects>(apiPoints.projects());
+    return useFetchData<apiResponseProjects>(apiPaths.projects());
   },
   {
     lazy: true,

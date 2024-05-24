@@ -1,4 +1,4 @@
-interface ProjectMedia {
+export interface Media {
   original: string;
   large: string;
   medium: string;

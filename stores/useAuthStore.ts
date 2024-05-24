@@ -1,9 +1,5 @@
-import { type User } from '~/types/user';
-import { type Credentials } from '~/types/credentials';
-import { Roles } from '~/constants/roles';
-import { Paths } from '~/constants/paths';
-import apiPoints from '~/constants/apiPoints';
-import type { ApiResponse } from '~/types/response/apiResponse';
+import type { ApiResponse, Credentials, User } from '~/types';
+import { apiPaths, Paths, Roles } from '~/types';
 
 export const useAuthStore = defineStore('auth', () => {
   const config = useRuntimeConfig();
@@ -13,7 +9,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = computed(() => !!user.value);
 
   const fetchSanctum = async () => {
-    const urlSanctum = config.public.apiHost + apiPoints.sanctum;
+    const urlSanctum = config.public.apiHost + apiPaths.sanctum;
 
     await useFetchData<ApiResponse>(urlSanctum, {
       isDefaultApiPath: false,
@@ -24,7 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
   const fetchUser = async () => {
     try {
       const { data, error } = await useAsyncData('current-user', () => {
-        return useFetchData<ApiResponse<User>>(apiPoints.me, { isAuth: true });
+        return useFetchData<ApiResponse<User>>(apiPaths.me, { isAuth: true });
       });
 
       if (error.value) {
@@ -86,7 +82,7 @@ export const useAuthStore = defineStore('auth', () => {
   const register = async (credentials: Credentials): Promise<void> => {
     try {
       await handleAuthentication(
-        apiPoints.register,
+        apiPaths.register,
         credentials,
         Paths.Verification,
       );
@@ -97,7 +93,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const login = async (credentials: Credentials): Promise<void> => {
     try {
-      await handleAuthentication(apiPoints.login, credentials, Paths.Personal);
+      await handleAuthentication(apiPaths.login, credentials, Paths.Personal);
     } catch (error) {
       console.error('Ошибка при аутентификации:', error);
     }
@@ -116,7 +112,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       let { data } = await useAsyncClientData(() => {
-        return useFetchData<ApiResponse>(apiPoints.logout, {
+        return useFetchData<ApiResponse>(apiPaths.logout, {
           options: {
             method: 'POST',
           },

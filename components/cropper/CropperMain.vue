@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-import type { PopupMainMethods } from '~/types/popupMainMethods';
+import type { PopupMainMethods } from '~/types';
 
 const props = defineProps({
   options: {

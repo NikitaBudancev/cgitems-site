@@ -1,4 +1,4 @@
-interface ProjectPreview {
+export interface Preview {
   original: string;
   large: string;
   medium: string;

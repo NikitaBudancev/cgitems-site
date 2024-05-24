@@ -102,8 +102,8 @@
 </template>
 
 <script setup lang="ts">
-import apiPoints from '~/constants/apiPoints';
-import type { ApiResponse } from '~/types/response/apiResponse';
+import type { ApiResponse, Project, ProjectStage } from '~/types';
+import { apiPaths } from '~/types';
 
 definePageMeta({
   layout: 'personal',
@@ -126,7 +126,7 @@ const { data, pending } = await useAsyncData(
   cacheKey,
   () => {
     return useFetchData<ApiResponse<Project>>(
-      apiPoints.meProject(route.params.slug as string),
+      apiPaths.meProject(route.params.slug as string),
       { isAuth: true },
     );
   },

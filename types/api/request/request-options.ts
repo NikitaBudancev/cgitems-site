@@ -1,7 +1,7 @@
-import type { method } from './methodsHttp';
+import type { HttpMethod } from '../method';
 
 export interface RequestOptions {
   headers?: Record<string, string>;
-  method?: method;
+  method?: HttpMethod;
   body?: any;
 }

@@ -1,4 +1,6 @@
-interface Project {
+import type { ProjectStage } from "../stage";
+
+export interface Project {
   id: 42;
   name: string;
   slug: string;

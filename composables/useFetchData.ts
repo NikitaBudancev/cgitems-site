@@ -1,4 +1,4 @@
-import type { RequestOptions } from '~/types/requestOptions';
+import type { RequestOptions } from '~/types';
 interface FetchOptions {
   options?: RequestOptions;
   isDefaultApiPath?: boolean;

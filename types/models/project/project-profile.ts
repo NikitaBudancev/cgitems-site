@@ -1,4 +1,6 @@
-interface ProfileProject {
+import type { ProjectStage } from "../stage";
+
+export interface ProjectProfile {
   result: {
     id: 42;
     name: string;

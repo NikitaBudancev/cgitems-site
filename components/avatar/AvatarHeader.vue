@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PopupMainMethods } from '~/types/popupMainMethods';
+import type { PopupMainMethods } from '~/types';
 
 const auth = useAuthStore();
 

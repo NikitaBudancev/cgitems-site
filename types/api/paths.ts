@@ -1,4 +1,6 @@
-export default {
+import createApiPath from '../utils/create-api-path';
+
+export const apiPaths = {
   me: '/me',
   login: '/auth/login',
   logout: '/auth/logout',
