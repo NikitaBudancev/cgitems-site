@@ -1,23 +1,15 @@
-import type { Roles } from '~/constants/roles';
+import type { Roles } from '~/types/enums';
+import type { Avatar } from './avatar';
+import type { UserInfo } from './user-info';
 
 export interface User {
-  id: Number;
-  firstName: String;
-  lastName: String;
-  initials: String;
-  email: String;
-  verified: String;
-  avatar: {
-    small: string;
-    medium: string;
-    larage: string;
-  };
+  id: number;
+  firstName: string;
+  lastName: string;
+  initials: string;
+  email: string;
+  verified: boolean;
+  avatar: Avatar;
   role: Roles;
-  info: {
-    artstation: String;
-    avatar: String;
-    behance: String;
-    facebook: String;
-    vk: String;
-  };
+  info: UserInfo;
 }

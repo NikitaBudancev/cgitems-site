@@ -1,14 +1,15 @@
-import type { ProjectStage } from "../stage";
+import type { ProjectStage } from '../stage';
 
 export interface Project {
-  id: 42;
+  id: number;
   name: string;
   slug: string;
   projectDescription: string;
   createdAt: string;
   currentStageId: number;
   projectType: object;
-  stages: Array<ProjectStage>;
+  stages?: ProjectStage[];
+  stage?: ProjectStage;
   course: object;
   review: string;
   reviewDate: string;

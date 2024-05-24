@@ -5,5 +5,5 @@ export interface ProjectStage {
   id: number;
   property: Stage;
   preview: Preview;
-  media: Array<Media>;
+  media: Media[];
 }
