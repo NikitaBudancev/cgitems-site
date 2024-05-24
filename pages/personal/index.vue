@@ -95,19 +95,25 @@
 </template>
 
 <script setup lang="ts">
-import apiPoints from '~/constants/apiPoints';
+import { apiPaths, cacheConfig } from '~/types';
 
 definePageMeta({
   layout: 'personal',
   middleware: ['auth', 'verified'],
 });
 
-const { data, pending, error } = await useAuthFetch(
-  apiPoints.meProjects(),
-  {},
-  { lazy: true },
+const { data, pending } = await useAsyncData(
+  cacheConfig.meProjects.key,
+  () => {
+    return useFetchData(apiPaths.meProjects(), {
+      isAuth: true,
+    });
+  },
+  {
+    lazy: true,
+    transform: transformData,
+    getCachedData: (key) =>
+      initCachedData(key, cacheConfig.meProjects.durationMinutes),
+  },
 );
-
-console.log('personal projects')
-
 </script>

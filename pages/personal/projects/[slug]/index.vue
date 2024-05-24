@@ -102,7 +102,8 @@
 </template>
 
 <script setup lang="ts">
-import apiPoints from '~/constants/apiPoints';
+import type { ApiResponse, Project, ProjectStage } from '~/types';
+import { apiPaths } from '~/types';
 
 definePageMeta({
   layout: 'personal',
@@ -111,22 +112,36 @@ definePageMeta({
 
 const route = useRoute();
 const activeStageIndex = ref<number>(0);
-const projectStages = ref<[ProjectStage] | null>(null);
+const projectStages = ref<ProjectStage[] | null>(null);
 
 const projectFields = reactive({
   name: '',
   projectDescription: '',
 });
 
-const { data, pending } = await useAuthFetch(
-  apiPoints.meProject(route.params.slug as string),
-  {},
-  { lazy: true },
+const slug = route.params.slug as string;
+const cacheKey = `project-${slug}`;
+
+const { data, pending } = await useAsyncData(
+  cacheKey,
+  () => {
+    return useFetchData<ApiResponse<Project>>(
+      apiPaths.meProject(route.params.slug as string),
+      { isAuth: true },
+    );
+  },
+  {
+    lazy: true,
+    transform: transformData,
+    getCachedData: (key) => initCachedData(key, 10),
+  },
 );
 
 watchEffect(() => {
-  const projectResult = data.value?.result as Project;
-  projectStages.value = projectResult.stages as [ProjectStage];
+  if (!data.value) return;
+
+  const projectResult = data.value.result;
+  projectStages.value = projectResult.stages;
 
   if (projectResult && projectResult.stages) {
     projectFields.name = projectResult.name || '';
@@ -144,6 +159,8 @@ watchEffect(() => {
 });
 
 const handleChangeStage = (stageId: number) => {
+  if (!projectStages.value) return;
+
   const index = projectStages.value.findIndex(
     (stage) => stage.property.id === stageId,
   );

@@ -95,7 +95,11 @@
           </li>
         </ul>
         <ul v-else class="projects__list projects__list-p">
-          <li v-for="project in projects" :key="project?.id" class="project">
+          <li
+            v-for="project in data?.result.projects"
+            :key="project?.id"
+            class="project"
+          >
             <img
               width="448"
               height="270"
@@ -161,17 +165,6 @@
             <div class="share share-projects" data-popup-active="share">
               <div class="share__title">Поделиться</div>
               <ul class="list social__list social__list-share">
-                <!--                            <li class="social__item social__item-share">-->
-                <!--                                <a href="#" class="social__link social__link-share" title="facebook">-->
-                <!--                                    <svg class="social__icon social__icon-share" xmlns="http://www.w3.org/2000/svg"-->
-                <!--                                         fill="none"-->
-                <!--                                         viewBox="0 0 25 24">-->
-                <!--                                        <path fill="#7D92B0" fill-rule="evenodd"-->
-                <!--                                              d="M3.464 0H21.73a2.876 2.876 0 0 1 2.868 2.869V21.14A2.868 2.868 0 0 1 21.729 24H3.464a2.868 2.868 0 0 1-2.867-2.859V2.869A2.876 2.876 0 0 1 3.464 0zm7.742 18.588h2.437v-5.976h1.998l.325-2.448h-2.323V8.472c0-.478.383-.86.85-.86h1.511v-2.19h-2.103a2.693 2.693 0 0 0-2.695 2.696v2.046H9.189v2.448h2.017v5.976z"-->
-                <!--                                              clip-rule="evenodd"/>-->
-                <!--                                    </svg>-->
-                <!--                                </a>-->
-                <!--                            </li>-->
                 <li class="social__item social__item-share">
                   <a
                     href="https://vk.com/share.php?url=https://cgitems.ru/projects/lightpoles-asset-/"
@@ -273,17 +266,19 @@
 </template>
 
 <script setup lang="ts">
-import apiPoints from '~/constants/apiPoints';
+import type { apiResponseProjects } from '~/types';
+import { apiPaths, cacheConfig } from '~/types';
 
-const { data, pending, error } = await useApiFetch(
-  apiPoints.projects(),
-  {},
-  { lazy: true },
+const { data, pending } = useAsyncData(
+  cacheConfig.projects.key,
+  () => {
+    return useFetchData<apiResponseProjects>(apiPaths.projects());
+  },
+  {
+    lazy: true,
+    transform: transformData,
+    getCachedData: (key) =>
+      initCachedData(key, cacheConfig.projects.durationMinutes),
+  },
 );
-
-const projects = ref([]);
-
-watchEffect(() => {
-  projects.value = data.value?.result?.projects || [];
-});
 </script>
