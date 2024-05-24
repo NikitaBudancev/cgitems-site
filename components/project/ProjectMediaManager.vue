@@ -80,11 +80,11 @@
 </template>
 
 <script setup lang="ts">
-import apiPoints from '~/constants/apiPoints';
+import { apiPaths, type Media } from '~/types';
 
 const props = defineProps({
   mediaItems: {
-    type: Array<ProjectMedia>,
+    type: Array<Media>,
     default: () => null,
   },
   stageId: {
@@ -100,9 +100,11 @@ const handleCroppedImage = async (file, fileName: string) => {
   formData.append('file', file, fileName);
 
   try {
-    const response = await useAuthFetch(apiPoints.mediaProject(), {
-      method: 'POST',
-      body: formData,
+    const response = await useFetchData(apiPaths.mediaProject(), {
+      options: {
+        method: 'POST',
+        body: formData,
+      },
     });
   } catch (error) {
     console.error('Произошла ошибка при загрузке:', error);

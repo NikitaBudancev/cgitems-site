@@ -20,7 +20,9 @@
 </template>
 
 <script setup lang="ts">
-import apiPoints from '~/constants/apiPoints';
+import { apiPaths } from '~/types';
+
+
 
 const props = defineProps<{
   activeStageId: number | 0;
@@ -33,7 +35,7 @@ const activeStage = ref(props.activeStageId || 0);
 const { data, pending } = await useAsyncData(
   'stages',
   () => {
-    return useFetchData(apiPoints.stages);
+    return useFetchData(apiPaths.stages);
   },
   { lazy: true },
 );
